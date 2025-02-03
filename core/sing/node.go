@@ -94,6 +94,11 @@ func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (optio
 			tls.Enabled = true
 			tls.CertificatePath = c.CertConfig.CertFile
 			tls.KeyPath = c.CertConfig.KeyFile
+			tls.ALPN = []string{
+				"h3",
+				"h2",
+				"http/1.1",
+			}
 		}
 	case panel.Reality:
 		tls.Enabled = true
@@ -376,6 +381,12 @@ func getInboundOptions(tag string, info *panel.NodeInfo, c *conf.Options) (optio
 			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{
 				TLS: &tls,
 			},
+		}
+	case "tuic":
+		in.Type = "tuic"
+		in.Options = &option.TUICInboundOptions{
+			ListenOptions:              listen,
+			InboundTLSOptionsContainer: option.InboundTLSOptionsContainer{TLS: &tls},
 		}
 	}
 	return in, nil
